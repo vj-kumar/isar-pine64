@@ -45,5 +45,5 @@ bitbake multiconfig:pine64-plus-buster:isar-image-base
 The final Debian image will be present in
 
 ```
-tmp/deploy/images/pine64-plus/isar-image-base-debian-buster-pine64-plus.ext4.img
+tmp/deploy/images/pine64-plus/isar-image-base-debian-buster-pine64-plus.wic.img
 ```
