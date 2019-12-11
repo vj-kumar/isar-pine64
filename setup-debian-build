@@ -1,0 +1,13 @@
+#!/bin/sh
+PINE64ROOT=$(pwd)
+ISARPATCHES=${PINE64ROOT}/isar-patches
+# First apply the patches to ISAR
+if [ -d ${ISARPATCHES} ]; then
+    cd ${PINE64ROOT}/isar
+    git reset --hard
+    git apply ${ISARPATCHES}/*
+    cd ${PINE64ROOT}
+fi
+TEMPLATECONF=${PINE64ROOT}/meta-pine64/conf
+. ./isar/isar-init-build-env $1
+sed -i "s|##PINE64ROOT##|$PINE64ROOT|g" ${BUILDDIR}/conf/bblayers.conf

@@ -1,0 +1,197 @@
+#
+# This file is your local configuration file and is where all local user settings
+# are placed. The comments in this file give some guide to the options a new user
+# to the system might want to change but pretty much any configuration option can
+# be set in this file. More adventurous users can look at local.conf.extended
+# which contains other examples of configuration which can be placed in this file
+# but new users likely won't need any of them initially.
+#
+# Lines starting with the '#' character are commented out and in some cases the
+# default values are provided as comments to show people example syntax. Enabling
+# the option is a question of removing the # character and making any change to the
+# variable as required.
+
+#
+# Machine Selection
+#
+# You need to select a specific machine to target the build with. There are a selection
+# of emulated machines available which can boot and run in the QEMU emulator:
+#
+# This sets the default machine to be qemuarm if no other machine is selected:
+MACHINE ??= "pine64-plus"
+
+#
+# Isar Configuration Selection
+#
+# You need to select a specific distribution configuration which will used for both:
+# generation of buildchroot environment and target root filesystem.
+#
+# This sets the default distribution configuration:
+DISTRO ??= "debian-buster"
+DISTRO_ARCH ??= "arm64"
+
+#
+# Multiple Configuration Selection
+#
+# If you want to use multiple configuration files for the build, list them in the
+# following option.
+#
+# This sets the default multiple configurations used:
+BBMULTICONFIG = " \
+    qemuarm-stretch \
+    qemuarm-buster \
+    qemuarm-bullseye \
+    qemuarm64-stretch \
+    qemuarm64-buster \
+    qemuarm64-bullseye \
+    qemui386-stretch \
+    qemui386-buster \
+    qemui386-bullseye \
+    qemuamd64-stretch \
+    qemuamd64-buster \
+    qemuamd64-buster-tgz \
+    qemuamd64-bullseye \
+    qemumipsel-stretch \
+    qemumipsel-buster \
+    qemumipsel-bullseye \
+    bananapi-stretch \
+    de0-nano-soc-stretch \
+    hikey-stretch \
+    nand-ubi-demo-buster \
+    pine64-plus-buster \
+    rpi-stretch \
+"
+
+#
+# Where to place downloads
+#
+# During a first build the system will download many different source code tarballs
+# from various upstream projects. This can take a while, particularly if your network
+# connection is slow. These are all stored in DL_DIR. When wiping and rebuilding you
+# can preserve this directory to speed up this part of subsequent builds. This directory
+# is safe to share between multiple builds on the same machine too.
+#
+# The default is a downloads directory under TOPDIR which is the build directory.
+#
+#DL_DIR ?= "${TOPDIR}/downloads"
+
+#
+# Where to place shared-state files
+#
+# BitBake has the capability to accelerate builds based on previously built output.
+# This is done using "shared state" files which can be thought of as cache objects
+# and this option determines where those files are placed.
+#
+# You can wipe out TMPDIR leaving this directory intact and the build would regenerate
+# from these files if no changes were made to the configuration. If changes were made
+# to the configuration, only shared state files where the state was still valid would
+# be used (done using checksums).
+#
+# The default is a sstate-cache directory under TOPDIR.
+#
+#SSTATE_DIR ?= "${TOPDIR}/sstate-cache"
+
+#
+# Where to place the build output
+#
+# This option specifies where the bulk of the building work should be done and
+# where BitBake should place its temporary files and output. Keep in mind that
+# this includes the extraction and compilation of many applications and the toolchain
+# which can use Gigabytes of hard disk space.
+#
+# The default is a tmp directory under TOPDIR.
+#
+#TMPDIR = "${TOPDIR}/tmp"
+
+#
+# Interactive shell configuration
+#
+# Under certain circumstances the system may need input from you and to do this it
+# can launch an interactive shell. It needs to do this since the build is
+# multithreaded and needs to be able to handle the case where more than one parallel
+# process may require the user's attention. The default is iterate over the available
+# terminal types to find one that works.
+#
+# Examples of the occasions this may happen are when resolving patches which cannot
+# be applied, to use the devshell or the kernel menuconfig
+#
+# Supported values are auto, gnome, xfce, rxvt, screen, konsole (KDE 3.x only), none
+# Note: currently, Konsole support only works for KDE 3.x due to the way
+# newer Konsole versions behave
+#OE_TERMINAL = "auto"
+# By default disable interactive patch resolution (tasks will just fail instead):
+PATCHRESOLVE = "noop"
+
+#
+# Disk Space Monitoring during the build
+#
+# Monitor the disk space during the build. If there is less that 1GB of space or less
+# than 100K inodes in any key build location (TMPDIR, DL_DIR, SSTATE_DIR), gracefully
+# shutdown the build. If there is less that 100MB or 1K inodes, perform a hard abort
+# of the build. The reason for this is that running completely out of space can corrupt
+# files and damages the build in ways which may not be easily recoverable.
+# It's necesary to monitor /tmp, if there is no space left the build will fail
+# with very exotic errors.
+BB_DISKMON_DIRS = "\
+    STOPTASKS,${TMPDIR},1G,100K \
+    STOPTASKS,${DL_DIR},1G,100K \
+    STOPTASKS,${SSTATE_DIR},1G,100K \
+    STOPTASKS,/tmp,100M,100K \
+    ABORT,${TMPDIR},100M,1K \
+    ABORT,${DL_DIR},100M,1K \
+    ABORT,${SSTATE_DIR},100M,1K \
+    ABORT,/tmp,10M,1K"
+
+#
+# Shared-state files from other locations
+#
+# As mentioned above, shared state files are prebuilt cache data objects which can
+# used to accelerate build time. This variable can be used to configure the system
+# to search other mirror locations for these objects before it builds the data itself.
+#
+# This can be a filesystem directory, or a remote url such as http or ftp. These
+# would contain the sstate-cache results from previous builds (possibly from other
+# machines). This variable works like fetcher MIRRORS/PREMIRRORS and points to the
+# cache locations to check for the shared objects.
+# NOTE: if the mirror uses the same structure as SSTATE_DIR, you need to add PATH
+# at the end as shown in the examples below. This will be substituted with the
+# correct path within the directory structure.
+#SSTATE_MIRRORS ?= "\
+#file://.* http://someserver.tld/share/sstate/PATH;downloadfilename=PATH \n \
+#file://.* file:///some/local/dir/sstate/PATH"
+
+# CONF_VERSION is increased each time build/conf/ changes incompatibly and is used to
+# track the version of this file when it was generated. This can safely be ignored if
+# this doesn't mean anything to you.
+CONF_VERSION = "1"
+
+#
+# The default list of extra packages to be installed.
+IMAGE_INSTALL = "hello-isar example-raw example-module-${KERNEL_NAME} enable-fsck isar-exclude-docs"
+## "cache_base_repo" relies on the cache ...
+#IMAGE_INSTALL += "isar-disable-apt-cache"
+
+#
+# Enable cross-compilation support
+# NOTE: this works on build host >= stretch for armhf, arm64 and amd64 targets for now.
+ISAR_CROSS_COMPILE ?= "0"
+
+#
+# Uncomment this to enable use of cached base repository
+#ISAR_USE_CACHED_BASE_REPO ?= "1"
+
+# Set root password to 'root'
+# Password was encrypted using following command:
+#   mkpasswd -m sha512crypt -R 10000
+# mkpasswd is part of the 'whois' package of Debian
+USERS += "root"
+USER_root[password] ??= "$6$rounds=10000$RXeWrnFmkY$DtuS/OmsAS2cCEDo0BF5qQsizIrq6jPgXnwv3PHqREJeKd1sXdHX/ayQtuQWVDHe0KIO0/sVH8dvQm1KthF0d/"
+
+GROUPS += "isar"
+GROUP_isar[flags] = "system"
+
+USERS += "isar"
+USER_isar[gid] = "isar"
+USER_isar[home] = "/var/lib/isar"
+USER_isar[comment] = "My isar user"
+USER_isar[flags] = "system create-home"
