@@ -1,3 +1,6 @@
 [submodule "isar"]
 	path = isar
 	url = https://github.com/ilbers/isar.git
+[submodule "meta-pine64"]
+	path = meta-pine64
+	url = git@github.com:vj-kumar/meta-pine64.git

@@ -1,2 +1,0 @@
-Common targets are:
-    multiconfig:pine64-plus-buster:isar-image-base
