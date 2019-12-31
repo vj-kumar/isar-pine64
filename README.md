@@ -1,49 +1,9 @@
-# isar-pine64
+This setup based on submodules is archived. Please use the alternate method using manifest instead.
 
-### Prerequisites
-
-This setup is tested on a Ubuntu 18.04 host machine. Other linux distros should
-work but not been validated.
-
-This project makes use of ISAR for building debian images. For more information
-visit https://github.com/ilbers/isar
-
-Install the following packages.
+https://github.com/vj-kumar/isar-manifests
 ```
-sudo apt-get install binfmt-support \
-    debootstrap \
-    dosfstools \
-    dpkg-dev \
-    gettext-base \
-    git \
-    mtools \
-    parted \
-    python3 \
-    python3-distutils \
-    qemu \
-    qemu-user-static \
-    reprepro \
-    sudo
-```
-
-### Cloning the repository
-```
-git clone --recurse-submodules git@github.com:vj-kumar/isar-pine64.git
-```
-
-### Setup sudo rights
-
-Follow the instructions available [here](https://github.com/ilbers/isar/blob/master/doc/user_manual.md#setup-sudo) to setup sudo rights.
-
-### Building Debian Image
-```
-. ./setup-debian-build ./build
+repo init -u https://github.com/vj-kumar/isar-manifests.git -m pine64.xml
+repo sync
+. ./setup-debian-build meta-pine64 
 bitbake multiconfig:pine64-plus-buster:isar-image-base
-```
-### Debian Image
-
-The final Debian image will be present in
-
-```
-tmp/deploy/images/pine64-plus/isar-image-base-debian-buster-pine64-plus.wic.img
 ```
